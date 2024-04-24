@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Italian Restaurant Online Ordering</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Cookie', cursive;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(to bottom, #ff99cc, #ff6699);
+            color: #333;
+        }
+        header {
+            background: linear-gradient(to right, #ff6699, #ff99cc);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 36px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+        }
+        .menu-item {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+            margin: 20px;
+            background-color: white;
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .menu-item img {
+            max-width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .menu-item h2, .menu-item p {
+            margin: 0;
+            text-align: center;
+            color: #cc3366;
+        }
+        .menu-item p {
+            font-size: 18px;
+        }
+        .menu-item button {
+            background: linear-gradient(to right, #ff6699, #ff99cc);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .menu-item button:hover {
+            background: linear-gradient(to right, #ff99cc, #ff6699);
+        }
+        .cart {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            width: 300px;
+            align-self: flex-start;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .cart h2 {
+            margin-bottom: 10px;
+            text-align: center;
+            color: #cc3366;
+        }
+        .cart-items {
+            list-style-type: none;
+            padding: 0;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .cart-item button {
+            background: linear-gradient(to right, #ff6699, #ff99cc);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .cart-item button:hover {
+            background: linear-gradient(to right, #ff99cc, #ff6699);
+        }
+        .checkout-btn {
+            background: linear-gradient(to right, #ff6699, #ff99cc);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+        .checkout-btn:hover {
+            background: linear-gradient(to right, #ff99cc, #ff6699);
+        }
+        .search-bar {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        .recommended-items {
+            width: 100%;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .recommended-items h2 {
+            color: #cc3366;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .recommended-item {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .recommended-item:hover {
+            transform: translateY(-5px);
+        }
+        .recommended-item p {
+            margin: 5px 0;
+            color: #cc3366;
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Bella Cucina</h1>
+        <p>Indulge in the Taste of Italy</p>
+        <label for="search" class="visually-hidden">Search for a dish:</label>
+        <input type="text" id="search" class="search-bar" placeholder="Search for a dish..." oninput="filterMenu(this.value)">
+    </header>
+    <div class="container">
+        <div class="menu" id="menu">
+            <!-- Menu items will be dynamically added here -->
+        </div>
+        <div class="cart">
+            <h2>Cart</h2>
+            <ul class="cart-items">
+                
+            </ul>
+            <button class="checkout-btn" onclick="checkout()">Checkout</button>
+        </div>
+    </div>
+
+    <div class="recommended-items" id="recommended">
+        <h2>Most Liked Items</h2>
+        <!-- Recommended items will be dynamically added here -->
+    </div>
+
+    <script>
+        let menuItems = [
+            { name: "Margherita Pizza", price: 10, image: "https://www.simplyrecipes.com/wp-content/uploads/2019/09/easy-pizza-dough-lead-4-600x840.jpg" },
+            { name: "Spaghetti Carbonara", price: 12, image: "https://www.seriouseats.com/thmb/jkrR01jAQUZVOj54eNqPVsQtfY8=/1500x844/filters:no_upscale():max_bytes(150000):strip_icc()/20190327-spaghetti-carbonara-vicky-wasik-23-1500x1125-190d11e05e9f4fb2bca1ad8a62cb6e3d.jpg" },
+            { name: "Lasagna", price: 15, image: "https://www.simplyrecipes.com/wp-content/uploads/2018/11/Lasagna-LEAD-4-600x840.jpg" },
+            { name: "Ravioli", price: 14, image: "https://www.simplyrecipes.com/wp-content/uploads/2021/08/Ravioli-Lead-3-600x840.jpg" },
+            { name: "Bruschetta", price: 8, image: "https://www.simplyrecipes.com/wp-content/uploads/2008/01/Bruschetta-Lead-5-600x840.jpg" },
+            { name: "Tiramisu", price: 9, image: "https://www.simplyrecipes.com/wp-content/uploads/2011/11/tiramisu-horiz-a-1600-600x840.jpg" },
+            { name: "Minestrone Soup", price: 10, image: "https://www.simplyrecipes.com/wp-content/uploads/2018/10/Minestrone-Soup-LEAD-3-600x840.jpg" },
+            { name: "Caprese Salad", price: 11, image: "https://www.simplyrecipes.com/wp-content/uploads/2020/07/caprese-salad-lead-1-600x840.jpg" },
+            { name: "Chicken Parmesan", price: 16, image: "https://www.simplyrecipes.com/wp-content/uploads/2013/09/chicken-parm-horiz-a-1600-600x840.jpg" },
+            { name: "Cannoli", price: 7, image: "https://www.simplyrecipes.com/wp-content/uploads/2006/09/cannoli-horiz-a-1600-600x840.jpg" },
+            { name: "Garlic Bread", price: 6, image: "https://www.simplyrecipes.com/wp-content/uploads/2019/12/cheesy-garlic-bread-horiz-a-1600-600x840.jpg" },
+            { name: "Fettuccine Alfredo", price: 13, image: "https://www.simplyrecipes.com/wp-content/uploads/2019/01/Fettuccine-Alfredo-LEAD-4-600x840.jpg" },
+            { name: "Italian Wedding Soup", price: 11, image: "https://www.simplyrecipes.com/wp-content/uploads/2017/11/Italian-Wedding-Soup-LEAD-HORIZONTAL-600x840.jpg" },
+            { name: "Calzone", price: 12, image: "https://www.simplyrecipes.com/wp-content/uploads/2021/10/Calzones-LEAD-3-600x840.jpg" },
+            { name: "Cacio e Pepe", price: 13, image: "https://www.simplyrecipes.com/wp-content/uploads/2016/12/cacio-e-pepe-horiz-a-1600-600x840.jpg" },
+            { name: "Panna Cotta", price: 8, image: "https://www.simplyrecipes.com/wp-content/uploads/2016/06/Panna-Cotta-LEAD-2-600x840.jpg" },
+            { name: "Prosciutto-Wrapped Asparagus", price: 10, image: "https://www.simplyrecipes.com/wp-content/uploads/2019/05/Prosciutto-Wrapped-Asparagus-LEAD-2-600x840.jpg" },
+            { name: "Lemon Risotto", price: 12, image: "https://www.simplyrecipes.com/wp-content/uploads/2012/04/lemon-risotto-horiz-a-1600-600x840.jpg" }
+        ];
+
+        let cartItems = [];
+
+        function renderMenu() {
+            const menuContainer = document.getElementById('menu');
+            menuContainer.innerHTML = '';
+            menuItems.forEach(item => {
+                const menuItem = document.createElement('div');
+                menuItem.className = 'menu-item';
+                menuItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <h2>${item.name}</h2>
+                    <p>$${item.price}</p>
+                    <button onclick="addToCart('${item.name}', ${item.price})">Add to Cart</button>
+                `;
+                menuContainer.appendChild(menuItem);
+            });
+        }
+
+        function filterMenu(keyword) {
+            const filteredItems = menuItems.filter(item => item.name.toLowerCase().includes(keyword.toLowerCase()));
+            const menuContainer = document.getElementById('menu');
+            menuContainer.innerHTML = '';
+            filteredItems.forEach(item => {
+                const menuItem = document.createElement('div');
+                menuItem.className = 'menu-item';
+                menuItem.innerHTML = `
+                    <img src="${item.image}" alt="${item.name}">
+                    <h2>${item.name}</h2>
+                    <p>$${item.price}</p>
+                    <button onclick="addToCart('${item.name}', ${item.price})">Add to Cart</button>
+                `;
+                menuContainer.appendChild(menuItem);
+            });
+        }
+
+        function addToCart(itemName, itemPrice) {
+            cartItems.push({ name: itemName, price: itemPrice });
+            renderCart();
+        }
+
+        function renderCart() {
+            const cartList = document.querySelector('.cart-items');
+            cartList.innerHTML = '';
+            let totalPrice = 0;
+            cartItems.forEach(item => {
+                const li = document.createElement('li');
+                li.className = 'cart-item';
+                li.innerHTML = `
+                    <span>${item.name}</span>
+                    <span>$${item.price}</span>
+                    <button onclick="removeFromCart('${item.name}')">Remove</button>
+                `;
+                cartList.appendChild(li);
+                totalPrice += item.price;
+            });
+            const totalContainer = document.createElement('li');
+            totalContainer.innerHTML = `<strong>Total:</strong> $${totalPrice}`;
+            cartList.appendChild(totalContainer);
+        }
+
+        function removeFromCart(itemName) {
+            cartItems = cartItems.filter(item => item.name !== itemName);
+            renderCart();
+        }
+
+        function checkout() {
+            alert('Thank you for your order!');
+            cartItems = [];
+            renderCart();
+        }
+
+        function getRecommendedItems() {
+            // For demonstration purposes, let's assume "likes" data for each item
+            const likesData = [
+                { name: "Margherita Pizza", likes: 25 },
+                { name: "Spaghetti Carbonara", likes: 18 },
+                { name: "Lasagna", likes: 15 },
+                { name: "Ravioli", likes: 10 },
+                { name: "Bruschetta", likes: 8 },
+                { name: "Tiramisu", likes: 20 },
+                { name: "Minestrone Soup", likes: 12 },
+                { name: "Caprese Salad", likes: 14 },
+                { name: "Chicken Parmesan", likes: 22 },
+                { name: "Cannoli", likes: 17 }
+            ];
+
+            likesData.sort((a, b) => b.likes - a.likes); // Sort by likes in descending order
+
+            const recommendedContainer = document.getElementById('recommended');
+            recommendedContainer.innerHTML = '';
+            const recommendedTitle = document.createElement('h2');
+            recommendedTitle.textContent = 'Most Liked Items';
+            recommendedContainer.appendChild(recommendedTitle);
+            likesData.slice(0, 3).forEach(item => {
+                const recommendedItem = document.createElement('div');
+                recommendedItem.className = 'recommended-item';
+                recommendedItem.innerHTML = `
+                    <p>${item.name}</p>
+                    <p>Likes: ${item.likes}</p>
+                `;
+                recommendedContainer.appendChild(recommendedItem);
+            });
+        }
+
+        renderMenu();
+        getRecommendedItems();
+    </script>
+</body>
+</html>
